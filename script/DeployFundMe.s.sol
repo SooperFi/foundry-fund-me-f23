@@ -7,7 +7,7 @@ import {HelperConfig} from "./HelperConfig.s.sol";
 
 /**
  * @title Basic deploy script for FundMe contracts
- * @author Patrick Collins
+ * @author Patrick Collins and Sooper Fi
  * @notice This contract is for deploying new FundMe contracts
  */
 contract DeployFundMe is Script {

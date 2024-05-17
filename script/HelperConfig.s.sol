@@ -1,33 +1,38 @@
 // SPDX-License-Identifier: MIT
-
-/**
- *  1. Deploy mocks when we are on a local anvil chain
- *  2. Keep track of contract address across multiple chains
- *    - e.g. Sepolia ETH/USD, mainnet ETH/USD, etc
- */
-
 pragma solidity ^0.8.18;
 
 import {Script} from "forge-std/Script.sol";
 import {MockV3Aggregator} from "../test/mocks/MockV3Aggregator.sol";
 
 /**
- *  if we are on a local anvil chain, we deploy mock contracts
- *  otherwise, we grab the existing contract address from the LIVE network
+ * @title Helper script for DeployFundMe
+ * @author Patrick Collins and Sooper Fi
+ * @notice
+ *  1. Deploy mocks when we are on a local anvil chain
+ *    - otherwise, get existing contract address from the LIVE network
+ *
+ *  2. Keep track of a contract's address across multiple chains
+ *    - e.g. Sepolia ETH/USD, mainnet ETH/USD, etc.
  */
 contract HelperConfig is Script {
-    NetworkConfig public activeNetworkConfig; // returns whatever current network we are on
+    // keep track of which network we're currently on
+    NetworkConfig public activeNetworkConfig;
 
     uint8 public constant DECIMALS = 8;
     int256 public constant INITIAL_PRICE = 2000e8;
 
+    /**
+     * Stores address of the Chainlink ETH/USD price feed contract.
+     */
     struct NetworkConfig {
-        address priceFeed; // ETH/USD price feed contract address
+        address priceFeed;
     }
 
     /**
-     * every time we deploy a HelperConfig() script, the constructor() call
-     * updates the activeNetworkConfig variable accordingly
+     * Every time we deploy a new HelperConfig() script, constructor()
+     *      updates activeNetworkConfig accordingly.
+     *
+     *      @dev Sepolia chainid=11155111; mainnet chainid=1
      */
     constructor() {
         if (block.chainid == 11155111) {
@@ -39,6 +44,9 @@ contract HelperConfig is Script {
         }
     }
 
+    /**
+     * Getter for the Sepolia ETH/USD contract address.
+     */
     function getSepoliaConfig() public pure returns (NetworkConfig memory) {
         NetworkConfig memory sepoliaConfig = NetworkConfig({
             priceFeed: 0x694AA1769357215DE4FAC081bf1f309aDC325306
@@ -46,6 +54,9 @@ contract HelperConfig is Script {
         return sepoliaConfig;
     }
 
+    /**
+     * Getter for the mainnet ETH/USD contract address.
+     */
     function getMainnetConfig() public pure returns (NetworkConfig memory) {
         NetworkConfig memory mainnetConfig = NetworkConfig({
             priceFeed: 0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419
@@ -53,6 +64,10 @@ contract HelperConfig is Script {
         return mainnetConfig;
     }
 
+    /**
+     * Checks if mock contract has already been deployed, deploys them
+     *     and returns the mock contract address on anvil if needed.
+     */
     function getAnvilConfig() public returns (NetworkConfig memory) {
         if (activeNetworkConfig.priceFeed != address(0)) {
             return activeNetworkConfig;

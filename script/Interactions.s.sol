@@ -15,6 +15,9 @@ import {FundMe} from "../src/FundMe.sol";
 contract FundFundMe is Script {
     uint256 constant SEND_VAL = 0.01 ether;
 
+    /**
+     *
+     */
     function fundFundMe(address mostRecentlyDeployed) public {
         // use this script contract to fund() a FundMe contract
         vm.startBroadcast();
@@ -23,6 +26,9 @@ contract FundFundMe is Script {
         console.log("Funded FundMe with %s", SEND_VAL);
     }
 
+    /**
+     *
+     */
     function run() external {
         // look in broadcast folder (using chainid) >> run_latest.json >> get address of last contract deployed
         address mostRecentlyDeployed = DevOpsTools.get_most_recent_deployment(
@@ -33,7 +39,13 @@ contract FundFundMe is Script {
     }
 }
 
+/**
+ * Getter for the mainnet ETH/USD contract address.
+ */
 contract WithdrawFundMe is Script {
+    /**
+     *
+     */
     function withdrawFundMe(address mostRecentlyDeployed) public {
         // use this script contract to withdraw() from a FundMe contract
         vm.startBroadcast();
@@ -41,6 +53,9 @@ contract WithdrawFundMe is Script {
         vm.stopBroadcast();
     }
 
+    /**
+     *
+     */
     function run() external {
         // look in broadcast folder (using chainid) >> run_latest.json >> get address of last contract deployed
         address mostRecentlyDeployed = DevOpsTools.get_most_recent_deployment(
